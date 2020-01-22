@@ -1,5 +1,5 @@
 public class FastFourier {
-    public static FastFourier (double[] doubleCode) {
-
+    public static double[][] FastFourierTransform (double[] doubleCode) {
+        return new double[1][1];
     }
 }

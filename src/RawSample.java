@@ -16,9 +16,9 @@ public class RawSample implements Sample {  //Rename to Raw Sample, add interfac
         length = givenLength;
     }
 
-    public RawSample(FourierSample fourierSample) {
-
-    }
+//    public RawSample(FourierSample fourierSample) {
+//
+//    }
 
     public int sampleRate() {
         return rate;
@@ -74,7 +74,7 @@ public class RawSample implements Sample {  //Rename to Raw Sample, add interfac
             double j = 0;
             while (j < codeLength && i < newDoubleCode.length) {
                 newDoubleCode[i] = doubleCode[(int) j];
-                j = j + ((double) rate) / ((double) sampleRate)));
+                j += (double) rate / (double) sampleRate;
                 i += 1;
             }
             return new RawSample(newDoubleCode, sampleRate);
@@ -82,11 +82,54 @@ public class RawSample implements Sample {  //Rename to Raw Sample, add interfac
     }
 
     public RawSample timeStretch(double x) {
+        if (x == 1) {
+            return new RawSample(doubleCode, rate);
+        } else if (x != 0) {
+            int blockSize = 1024;
+            double[] newDoubleCode = new double[doubleCode.length];
+            for (int i = 0; i < newDoubleCode.length; i += blockSize) {
+                int j = 0;
+                double k = 0;
+                while (j < blockSize / x) {
+                    if (i + k >= newDoubleCode.length || k >= blockSize) {
+                        k = 0;
+                    }
+                    newDoubleCode[j] = doubleCode[(int) (i + k)];
+                    j += 1;
+                    k += 1;
+                }
+            }
+            return new RawSample(newDoubleCode, rate);
+        } else {
+            System.out.println("Warning: time-stretching by 0 -> length 0 sample.");
+            return new RawSample(new double[0], rate);
+        }
 
     }
 
     public RawSample pitchShift(double x) {
-        return new RawSample(doubleCode, rate);
+        if (x == 1) {
+            return new RawSample(doubleCode, rate);
+        } else if (x != 0) {
+            int blockSize = 1024;
+            double[] newDoubleCode = new double[doubleCode.length];
+            for (int i = 0; i < newDoubleCode.length; i += blockSize) {
+                int j = 0;
+                double k = 0;
+                while (j < blockSize) {
+                    if (i + k >= newDoubleCode.length || k >= blockSize) {
+                        k = 0;
+                    }
+                    newDoubleCode[j] = doubleCode[(int) (i + k)];
+                    j += 1;
+                    k += x; //idk what this should be
+                }
+            }
+            return new RawSample(newDoubleCode, rate);
+        } else {
+            System.out.println("Warning: pitch-shifting by 0 -> length 0 sample.");
+            return new RawSample(new double[0], rate);
+        }
     }
 
     public RawSample speedShift(double x) {
@@ -124,15 +167,15 @@ public class RawSample implements Sample {  //Rename to Raw Sample, add interfac
         for (int i = 1; i < times.length - 1; i++) {
             RawSamples[i] = new RawSample(Arrays.copyOfRange(doubleCode, times[i-1], times[i]), rate);
         }
-        RawSamples[times.length - 1] = new RawSample(Arrays.copyOfRange(doubleCode, times[i], doubleCode.length), rate);
+        RawSamples[times.length - 1] = new RawSample(Arrays.copyOfRange(doubleCode, times[times.length - 1], doubleCode.length), rate);
         return RawSamples;
     }
 
     public void play(double x1, double x2) {
-
+        StdAudio.play(Arrays.copyOfRange(doubleCode, (int) (x1 * rate), (int) (x2 * rate)));
     }
 
     public void play() {
-
+        StdAudio.play(doubleCode);
     }
 }

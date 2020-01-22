@@ -5,6 +5,10 @@ public class Mark {
     public Mark (int time, String name, int sampleRate) {
         intTime = time;
         label = name;
+        if (name.length() > 3) {
+            System.out.println("Warning: name had more than three characters -> truncated.");
+            label = label.substring(0, 3);
+        }
         realTime = time / sampleRate;
     }
 

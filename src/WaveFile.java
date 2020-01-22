@@ -21,11 +21,11 @@ public class WaveFile implements SoundFile {
         }
     }
 
-    public WaveFile (double[][] givenDoubleCodes, String filename) {
+    public WaveFile (double[][] givenDoubleCodes, String filename, int sampleRate) {
         fileName = filename;
         doubleCodes = givenDoubleCodes;
-        WavFile wavFile = new WavFile();
         try {
+            WavFile wavFile = WavFile.newWavFile(new File(filename), doubleCodes.length, doubleCodes[0].length, givenDoubleCodes.length, sampleRate);
             wavFile.writeFrames(givenDoubleCodes, givenDoubleCodes[0].length);
         } catch (Exception e) {
             System.out.println("Error: " + e);

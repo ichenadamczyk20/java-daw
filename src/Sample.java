@@ -18,6 +18,8 @@ public interface Sample {
 
     int sampleRate();
 
+    public double[] rawDoubleCode();
+
     void play(double x1, double x2);
 
     void play();
